@@ -180,7 +180,7 @@
       setInterval(loadMessages, 1000);
     };
     document.getElementById('btnOfflineView').addEventListener('click', function() {
-      fetch('/offline.html').then(response => response.text()).then(html => {
+      fetch('https://vibetalk.glitch.me/offline.html').then(response => response.text()).then(html => {
         const offlineContent = document.createElement('div');
         offlineContent.id = 'offlineContent';
         offlineContent.innerHTML = html;
@@ -274,7 +274,7 @@
           timestamp: Date.now(),
           imageUrl: match ? match[0] : null
         };
-        fetch('/messages', {
+        fetch('https://vibetalk.glitch.me/messages', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify(messageData)
@@ -299,7 +299,7 @@
     }
     let alertShown = false;
     function loadMessages(scrollToBottom = false) {
-      fetch('/messages')
+      fetch('https://vibetalk.glitch.me/messages')
         .then(response => response.json())
         .then(data => {
           const wasScrolledToBottom = messagesList.scrollHeight - messagesList.clientHeight <= messagesList.scrollTop + 1;
