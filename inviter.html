@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Invito - VibeTalk</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      background-color: #333;
+      color: white;
+      margin: 0;
+    }
+    .container {
+      text-align: center;
+      border: 1px solid #fff;
+      padding: 30px;
+      border-radius: 8px;
+      background-color: #444;
+    }
+    #invite-link {
+      color: #FFDD00;
+      text-decoration: none;
+      font-weight: bold;
+    }
+    #message-display {
+      margin-top: 20px;
+      font-size: 18px;
+      color: #ff6347;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>Benvenuto su VibeTalk!</h1>
+    <p>Invita 5 persone e ottieni il ruolo "Inviter"</p>
+    <a id="invite-link" href="#">Caricamento link...</a>
+    <div id="message-display">Caricamento stato inviti...</div>
+  </div>
+  <script>
+    const inviteLink = document.getElementById("invite-link");
+    const messageDisplay = document.getElementById("message-display");
+
+    const randomCode = Math.random().toString(36).substring(2, 8);
+    const userId = localStorage.getItem("userId") || "defaultUser";
+    const link = `https://vibetalk.glitch.me?text=Sono%20entrato%20dall'invito%20${randomCode}&send=true&invite=${randomCode}&creator=${userId}`;
+
+    inviteLink.href = link;
+    inviteLink.innerText = `Invito: ${link}`;
+
+    let inviteCount = 0;
+
+    function checkInviteStatus() {
+      fetch(`/api/invites/${randomCode}`)
+        .then(response => response.json())
+        .then(data => {
+          if (data.status === 'success') {
+            inviteCount = data.count;
+            updateInviteMessage();
+          }
+        })
+        .catch(error => console.error('Error:', error));
+    }
+
+    function updateInviteMessage() {
+      if (inviteCount >= 5) {
+        messageDisplay.innerText = 'Hai ricevuto il ruolo "Inviter"!';
+      } else {
+        messageDisplay.innerText = `Invita ${5 - inviteCount} persone per ottenere il ruolo "Inviter"`;
+      }
+    }
+
+    checkInviteStatus();
+    setInterval(checkInviteStatus, 5000);
+  </script>
+</body>
+</html>

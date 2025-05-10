@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Gestione richieste e thread</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background-color: #f4f4f4;
+      margin: 0;
+      padding: 0;
+    }
+    .container {
+      width: 80%;
+      margin: 20px auto;
+      background-color: white;
+      padding: 20px;
+      box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    }
+    .request {
+      border-bottom: 1px solid #ddd;
+      padding: 10px 0;
+    }
+    .request:last-child {
+      border-bottom: none;
+    }
+    .buttons {
+      display: flex;
+      justify-content: space-around;
+    }
+    .btn {
+      padding: 8px 15px;
+      margin: 5px;
+      border: none;
+      cursor: pointer;
+      border-radius: 4px;
+    }
+    .accept {
+      background-color: green;
+      color: white;
+    }
+    .reject {
+      background-color: red;
+      color: white;
+    }
+    .loading {
+      text-align: center;
+      padding: 20px;
+      font-size: 18px;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="container">
+    <h1>Gestione delle richieste e thread</h1>
+    <div id="requests-container">
+      <div class="loading">Caricamento in corso...</div>
+    </div>
+  </div>
+
+  <script>
+    let requestCount = 0;
+    const requestLimit = 10;
+    const timeFrame = 10000;
+    let firstRequestTime = Date.now();
+
+    function monitorRequests() {
+      const currentTime = Date.now();
+      if (currentTime - firstRequestTime <= timeFrame) {
+        requestCount++;
+      } else {
+        firstRequestTime = currentTime;
+        requestCount = 1;
+      }
+
+      if (requestCount > requestLimit) {
+        alert('Potenziale attacco DDoS rilevato! Troppe richieste in breve tempo.');
+        return;
+      }
+
+      loadRequests();
+    }
+
+    function loadRequests() {
+      fetch('/api/requests')
+        .then(response => response.json())
+        .then(data => {
+          const container = document.getElementById('requests-container');
+          container.innerHTML = '';
+          
+          if (data.length === 0) {
+            container.innerHTML = '<p>Nessuna richiesta in attesa.</p>';
+            return;
+          }
+
+          data.forEach(request => {
+            const requestElement = document.createElement('div');
+            requestElement.classList.add('request');
+
+            const requestDetails = document.createElement('p');
+            requestDetails.innerHTML = `ID: ${request.id} - Tipo: ${request.type} - Dettagli: ${request.details}`;
+
+            const buttons = document.createElement('div');
+            buttons.classList.add('buttons');
+
+            const acceptButton = document.createElement('button');
+            acceptButton.classList.add('btn', 'accept');
+            acceptButton.innerText = 'Accetta';
+            acceptButton.onclick = () => handleRequestAction(request.id, 'accept');
+
+            const rejectButton = document.createElement('button');
+            rejectButton.classList.add('btn', 'reject');
+            rejectButton.innerText = 'Rifiuta';
+            rejectButton.onclick = () => handleRequestAction(request.id, 'reject');
+
+            buttons.appendChild(acceptButton);
+            buttons.appendChild(rejectButton);
+
+            requestElement.appendChild(requestDetails);
+            requestElement.appendChild(buttons);
+
+            container.appendChild(requestElement);
+          });
+        })
+        .catch(error => {
+          const container = document.getElementById('requests-container');
+          container.innerHTML = '<p>Errore nel caricamento delle richieste.</p>';
+        });
+    }
+
+    function handleRequestAction(requestId, action) {
+      fetch(`/api/requests/${requestId}`, {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({ action })
+      })
+      .then(response => response.json())
+      .then(data => {
+        if (data.status === 'success') {
+          alert(`Richiesta ${action}ata con successo!`);
+          loadRequests();
+        } else {
+          alert(`Errore: ${data.message}`);
+        }
+      })
+      .catch(error => {
+        alert('Errore nell\'azione della richiesta.');
+      });
+    }
+
+    setInterval(monitorRequests, 5000);
+  </script>
+
+</body>
+</html>

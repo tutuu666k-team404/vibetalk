@@ -1,0 +1,34 @@
+[
+  {
+    "userId": "System",
+    "message": "Welcome to VibeTalk! We're happy you're here! Start connecting with other users right away, exploring the chat and sharing your vibes. Are you ready for a unique experience? Start chatting now!",
+    "messageId": "msg-1",
+    "timestamp": "2025-02-05T18:09:32.119Z",
+    "ip": "156.217.79.70",
+    "role": "Bot"
+  },
+  {
+    "userId": "System",
+    "message": "Download the PC version of VibeTalk! For a better experience on PC, we invite you to download and install the .exe version of VibeTalk. It is easy to install and allows you to enjoy all the features of our site even more smoothly and quickly. Don't miss the opportunity to join our community directly from your desktop! 🚀 What are you waiting for? Click here to download: https://vibetalk.glitch.me/pc/download",
+    "messageId": "msg-2",
+    "timestamp": "2025-02-27T17:57:17.747Z",
+    "ip": "156.217.79.70",
+    "role": "Bot"
+  },
+  {
+    "userId": "User-2174",
+    "message": "[censured]",
+    "messageId": "msg-1743292265242",
+    "timestamp": "2025-03-29T23:51:05.242Z",
+    "ip": "176.125.253.211",
+    "role": ""
+  },
+  {
+    "userId": "Russian People",
+    "message": "Привет, проект прикольный но долгие загрузки.",
+    "messageId": "msg-1745782557522",
+    "timestamp": "2025-04-27T19:35:57.522Z",
+    "ip": "31.173.83.50",
+    "role": ""
+  }
+]

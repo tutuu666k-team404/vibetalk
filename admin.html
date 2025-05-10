@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Admin - Vibetalk</title>
+  <style>
+    body { background-color: #000; color: white; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; display: flex; justify-content: center; align-items: center; height: 100vh; flex-direction: column; }
+    h1 { margin-bottom: 30px; font-size: 32px; }
+    table { width: 100%; border-collapse: collapse; margin-bottom: 20px; }
+    th, td { padding: 10px; text-align: left; border: 1px solid #ddd; }
+    th { background-color: #444; }
+    tr:nth-child(even) { background-color: #333; }
+    button { padding: 8px 16px; background-color: #007bff; color: white; border: none; border-radius: 5px; cursor: pointer; }
+    button:disabled { background-color: #555; cursor: not-allowed; }
+  </style>
+</head>
+<body>
+
+  <h1>Gestione Ticket - Vibetalk</h1>
+  <table id="ticketTable">
+    <thead>
+      <tr>
+        <th>ID Ticket</th>
+        <th>Nome</th>
+        <th>Email</th>
+        <th>Messaggio</th>
+        <th>Status</th>
+        <th>Azioni</th>
+      </tr>
+    </thead>
+    <tbody></tbody>
+  </table>
+
+  <script>
+    fetch('/admin/tickets')
+      .then(response => response.json())
+      .then(tickets => {
+        const ticketTable = document.getElementById('ticketTable').getElementsByTagName('tbody')[0];
+        tickets.forEach(ticket => {
+          const row = ticketTable.insertRow();
+          row.insertCell(0).textContent = ticket.ticketId;
+          row.insertCell(1).textContent = ticket.nome;
+          row.insertCell(2).textContent = ticket.email;
+          row.insertCell(3).textContent = ticket.messaggio;
+          row.insertCell(4).textContent = ticket.status;
+          const actionsCell = row.insertCell(5);
+          const resolveButton = document.createElement('button');
+          resolveButton.textContent = 'Risolto';
+          resolveButton.disabled = ticket.status === 'risolto';
+          resolveButton.onclick = () => updateTicketStatus(ticket.ticketId, 'risolto');
+          const closeButton = document.createElement('button');
+          closeButton.textContent = 'Chiudi';
+          closeButton.disabled = ticket.status === 'chiuso';
+          closeButton.onclick = () => updateTicketStatus(ticket.ticketId, 'chiuso');
+          actionsCell.appendChild(resolveButton);
+          actionsCell.appendChild(closeButton);
+        });
+      });
+
+    function updateTicketStatus(ticketId, action) {
+      fetch(`/support/ticket/${ticketId}`, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ action })
+      })
+      .then(() => {
+        document.location.reload();
+      });
+    }
+  </script>
+
+</body>
+</html>

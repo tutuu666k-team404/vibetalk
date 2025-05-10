@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Log Segnalazioni - Vibetalk</title>
+  <style>
+    body {
+      background-color: #000;
+      color: white;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      flex-direction: column;
+    }
+    h1 {
+      margin-bottom: 30px;
+      font-size: 32px;
+    }
+    .log-entry {
+      background-color: #333;
+      padding: 15px;
+      border-radius: 10px;
+      margin-bottom: 10px;
+      width: 90%;
+    }
+    .log-header {
+      display: flex;
+      justify-content: space-between;
+    }
+    .log-header span {
+      font-weight: bold;
+    }
+    .log-body {
+      margin-top: 10px;
+    }
+    .log-footer {
+      margin-top: 10px;
+      font-size: 12px;
+      color: #aaa;
+    }
+  </style>
+</head>
+<body>
+
+  <h1>Log Segnalazioni - Vibetalk</h1>
+  <div id="logs"></div>
+
+  <script>
+    fetch('/admin/reports') 
+      .then(response => response.json())
+      .then(reports => {
+        const logsContainer = document.getElementById('logs');
+        reports.forEach(report => {
+          const logEntry = document.createElement('div');
+          logEntry.classList.add('log-entry');
+
+          const logHeader = document.createElement('div');
+          logHeader.classList.add('log-header');
+          logHeader.innerHTML = `<span>Report ID: ${report.reportId}</span><span>Tipo: ${report.reportType}</span>`;
+
+          const logBody = document.createElement('div');
+          logBody.classList.add('log-body');
+          logBody.innerHTML = `<strong>Motivazione:</strong> ${report.reportMessage}`;
+
+          const logFooter = document.createElement('div');
+          logFooter.classList.add('log-footer');
+          logFooter.textContent = `Segnalato da: ${report.userId} | Data: ${new Date(report.timestamp).toLocaleString()} | Stato: ${report.status}`;
+
+          logEntry.appendChild(logHeader);
+          logEntry.appendChild(logBody);
+          logEntry.appendChild(logFooter);
+
+          logsContainer.appendChild(logEntry);
+        });
+      })
+      .catch(err => {
+        console.error('Errore nel recuperare i log delle segnalazioni:', err);
+      });
+  </script>
+
+</body>
+</html>

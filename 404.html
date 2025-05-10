@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>404 - Pagina Non Trovata</title>
+  <style>
+    body {
+      font-family: 'Arial', sans-serif;
+      background: linear-gradient(135deg, #8e44ad, #3498db);
+      color: #fff;
+      margin: 0;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      text-align: center;
+      flex-direction: column;
+    }
+
+    .container {
+      animation: fadeIn 1s ease-out;
+    }
+
+    h1 {
+      font-size: 8rem;
+      margin: 20px 0;
+      color: #e74c3c;
+      animation: bounce 1s infinite;
+    }
+
+    p {
+      font-size: 1.4rem;
+      margin: 20px 0;
+      line-height: 1.6;
+      max-width: 600px;
+      color: #ddd;
+    }
+
+    a {
+      font-size: 1.2rem;
+      color: #3498db;
+      text-decoration: none;
+      margin-top: 20px;
+      display: inline-block;
+      font-weight: bold;
+      transition: color 0.3s ease;
+    }
+
+    a:hover {
+      color: #1abc9c;
+    }
+
+    .emoji {
+      font-size: 5rem;
+      margin-bottom: 20px;
+      animation: bounce 1s infinite;
+    }
+
+    @keyframes fadeIn {
+      0% {
+        opacity: 0;
+      }
+      100% {
+        opacity: 1;
+      }
+    }
+
+    @keyframes bounce {
+      0%, 100% {
+        transform: translateY(0);
+      }
+      50% {
+        transform: translateY(-20px);
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <div class="container">
+    <p class="emoji">🚫</p>
+    <h1>404</h1>
+    <p>Ops! La pagina che stai cercando non esiste o è stata rimossa.</p>
+  </div>
+
+</body>
+</html>

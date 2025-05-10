@@ -1,0 +1,20 @@
+[
+  {
+    "userId": "Guestisback",
+    "role": "owner",
+    "ip": "212.24.11.221",
+    "createdAt": "2025-01-21T08:10:15.456Z"
+  },
+  {
+    "userId": "User-2007",
+    "role": "",
+    "ip": "213.25.11.221",
+    "createdAt": "2090-09-24T08:10:15.456Z"
+  },
+  {
+    "userId": "System",
+    "role": "Bot",
+    "ip": "156.217.79.70",
+    "createdAt": "2025-01-21T08:10:15.456Z"
+  }
+]
