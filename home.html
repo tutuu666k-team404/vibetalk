@@ -253,90 +253,102 @@
       }, 1000);
       console.log("User ID confirmed:", userId);
     });
-    function sendMessage() {
-      const msg = messageInput.value.trim();
-      if (msg) {
-        if (!localStorage.getItem('notificationsRequested')) {
-          localStorage.setItem('notificationsRequested', 'true');
-          Notification.requestPermission().then(permission => {
-            if (permission === 'granted') {
-              notificationsAllowed = true;
-            }
-          });
-        }
-        const imageUrlRegex = /(https?:\/\/.*\.(?:png|jpg|jpeg|gif|bmp))/i;
-        const match = msg.match(imageUrlRegex);
-        let messageData = {
-          userId: userId,
-          role: userRole,
-          message: msg,
-          messageId: `${msg}-${Date.now()}`,
-          timestamp: Date.now(),
-          imageUrl: match ? match[0] : null
-        };
-        fetch('https://vibetalk.glitch.me/messages', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify(messageData)
-        })
-        .then(response => {
-          if (response.status === 403) {
-            return response.json().then(data => {
-              alert(data.status);
-              localStorage.setItem('banned', 'true');
-              window.location.href = 'ban';
-              throw new Error(data.status);
-            });
-          }
-          return response;
-        })
-        .then(() => {
-          messageInput.value = '';
-          loadMessages(true);
-        })
-        .catch(error => console.error(error));
+ async function sendMessage() {
+    const msg = messageInput.value.trim();
+    if (!msg) return;
+    if (!localStorage.getItem('notificationsRequested')) {
+      localStorage.setItem('notificationsRequested', 'true');
+      Notification.requestPermission().then(permission => {
+        if (permission === 'granted') notificationsAllowed = true;
+      });
+    }
+    const imageUrlRegex = /(https?:\/\/.*\.(?:png|jpg|jpeg|gif|bmp))/i;
+    const match = msg.match(imageUrlRegex);
+    const messageData = {
+      userId: userId,
+      role: userRole,
+      message: msg,
+      messageId: `${msg}-${Date.now()}`,
+      timestamp: Date.now(),
+      imageUrl: match ? match[0] : null
+    };
+    try {
+      const response = await fetch('https://vibetalk.glitch.me/messages', {
+        method: 'POST',
+        mode: 'cors',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(messageData)
+      });
+      if (response.status === 403) {
+        const data = await response.json();
+        alert(data.status);
+        localStorage.setItem('banned', 'true');
+        window.location.href = 'ban';
+        return;
       }
+      if (!response.ok) {
+        console.error('Errore invio messaggio:', response.statusText);
+        return;
+      }
+      messageInput.value = '';
+      loadMessages(true);
+    } catch (err) {
+      console.error('Fetch POST fallito:', err);
+      mostraOffline();
     }
-    let alertShown = false;
-    function loadMessages(scrollToBottom = false) {
-      fetch('https://vibetalk.glitch.me/messages')
-        .then(response => response.json())
-        .then(data => {
-          const wasScrolledToBottom = messagesList.scrollHeight - messagesList.clientHeight <= messagesList.scrollTop + 1;
-          messagesList.innerHTML = '';
-          data.forEach(msg => {
-            const li = document.createElement('li');
-            li.classList.add('message');
-            const messageHeader = document.createElement('div');
-            messageHeader.classList.add('message-header');
-            const messageUsername = document.createElement('span');
-            messageUsername.classList.add('message-username');
-            messageUsername.textContent = msg.userId;
-            const messageRole = document.createElement('span');
-            messageRole.classList.add('message-role');
-            messageRole.textContent = msg.role || '';
-            messageHeader.appendChild(messageUsername);
-            messageHeader.appendChild(messageRole);
-            const messageContent = document.createElement('div');
-            messageContent.classList.add('message-content');
-            messageContent.textContent = msg.message;
-            const timestamp = document.createElement('span');
-            timestamp.classList.add('message-timestamp');
-            timestamp.textContent = new Date(msg.timestamp).toLocaleString();
-            li.appendChild(messageHeader);
-            li.appendChild(messageContent);
-            li.appendChild(timestamp);
-            messagesList.appendChild(li);
-            if (msg.role === 'Explorer' && !alertShown) {
-              alert('Congratulations! You have received the role of Explorer.');
-              alertShown = true;
-            }
-          });
-          if (wasScrolledToBottom || scrollToBottom) {
-            messagesList.scrollTop = messagesList.scrollHeight;
-          }
-        });
+  }
+
+  async function loadMessages(scrollToBottom = false) {
+    try {
+      const response = await fetch('https://vibetalk.glitch.me/messages', {
+        method: 'GET',
+        mode: 'cors',
+        headers: {
+          'Accept': 'application/json'
+        }
+      });
+      if (!response.ok) {
+        console.error('Errore caricamento messaggi:', response.statusText);
+        return;
+      }
+      const data = await response.json();
+      const wasScrolledToBottom = messagesList.scrollHeight - messagesList.clientHeight <= messagesList.scrollTop + 1;
+      messagesList.innerHTML = '';
+      data.forEach(msg => {
+        const li = document.createElement('li');
+        li.classList.add('message');
+        const header = document.createElement('div');
+        header.classList.add('message-header');
+        const name = document.createElement('span');
+        name.classList.add('message-username');
+        name.textContent = msg.userId;
+        const role = document.createElement('span');
+        role.classList.add('message-role');
+        role.textContent = msg.role || '';
+        header.append(name, role);
+        const content = document.createElement('div');
+        content.classList.add('message-content');
+        content.textContent = msg.message;
+        const ts = document.createElement('span');
+        ts.classList.add('message-timestamp');
+        ts.textContent = new Date(msg.timestamp).toLocaleString();
+        li.append(header, content, ts);
+        messagesList.appendChild(li);
+        if (msg.role === 'Explorer' && !alertShown) {
+          alert('Congratulations! You have received the role of Explorer.');
+          alertShown = true;
+        }
+      });
+      if (wasScrolledToBottom || scrollToBottom) {
+        messagesList.scrollTop = messagesList.scrollHeight;
+      }
+    } catch (err) {
+      console.error('Fetch GET fallito:', err);
+      mostraOffline();
     }
+  }
     function scrollToBottom() {
       messagesList.scrollTop = messagesList.scrollHeight;
     }
