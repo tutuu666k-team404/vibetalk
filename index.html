@@ -1,404 +1,133 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="it">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>VibeTalk</title>
-  <link rel="manifest" href="/manifest.json">
-  <meta name="theme-color" content="#000000">
-  <meta name="mobile-web-app-capable" content="yes">
-  <meta name="apple-mobile-web-app-capable" content="yes">
-  <meta name="apple-mobile-web-app-status-bar-style" content="black">
-  <meta name="apple-mobile-web-app-title" content="VibeTalk">
-  <link rel="apple-touch-icon" sizes="192x192" href="https://cdn.glitch.global/47e45c87-30a2-4b4f-af00-6c82cbf288ad/vibetalklogo.png?v=1741273119426">
-  <link rel="apple-touch-icon" sizes="512x512" href="https://cdn.glitch.global/47e45c87-30a2-4b4f-af00-6c82cbf288ad/vibetalkbanner.png?v=1741273129245">
-  <meta name="title" content="VibeTalk">
-  <meta name="description" content="VibeTalk is the ultimate chat platform, featuring a modern design and dynamic animations.">
-  <meta name="keywords" content="Global Chat, Tutuu666k, VibeTalk, Real-Time, World">
-  <meta name="author" content="Tutuu666k Team">
-  <meta name="robots" content="index, follow">
-  <meta property="og:type" content="website">
-  <meta property="og:title" content="VibeTalk">
-  <meta property="og:description" content="VibeTalk is the ultimate chat platform, featuring a modern design and dynamic animations.">
-  <meta property="og:image" content="https://cdn.glitch.global/47e45c87-30a2-4b4f-af00-6c82cbf288ad/vibetalkbanner.png?v=1741273129245">
-  <meta property="og:url" content="https://vibetalk.glitch.me/">
-  <meta name="twitter:card" content="summary_large_image">
-  <meta name="twitter:title" content="VibeTalk">
-  <meta name="twitter:description" content="VibeTalk is the ultimate chat platform, featuring a modern design and dynamic animations.">
-  <meta name="twitter:image" content="https://cdn.glitch.global/47e45c87-30a2-4b4f-af00-6c82cbf288ad/vibetalkbanner.png?v=1741273129245">
-  <meta name="twitter:site" content="@ZardoubMansour">
-  <link rel="icon" type="image/png" href="https://cdn.glitch.global/47e45c87-30a2-4b4f-af00-6c82cbf288ad/vibetalklogo.png?v=1741273119426">
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/tailwindcss/2.2.19/tailwind.min.css" rel="stylesheet"/>
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css" rel="stylesheet"/>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/axios/1.4.0/axios.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.1/gsap.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/particles.js@2.0.0/particles.min.js"></script>
   <style>
-    * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
-    body { background-color: #000; color: white; overflow: hidden; }
-    .container { position: absolute; display: flex; justify-content: center; align-items: center; height: 100vh; width: 100vw; background: #000; z-index: 2; transition: opacity 1s ease-in-out; }
-    .logo { width: 200px; filter: drop-shadow(0 0 20px #0ff); opacity: 1 !important; transform: scale(1) !important; animation: pulse 1.5s ease-in-out forwards, glitch 1.2s infinite alternate; }
-    .chat-container { width: 100vw; height: 100vh; display: flex; flex-direction: column; justify-content: flex-end; position: absolute; top: 0; left: 0; background-color: #222; opacity: 0; transform: scale(0.9); transition: opacity 1s ease-in-out, transform 1s ease-in-out; z-index: 1; padding: 20px; padding-bottom: 80px; }
-    .messages { list-style-type: none; padding: 0; margin-bottom: 20px; max-height: 100%; overflow-y: auto; }
-    .message { display: flex; flex-direction: column; align-items: flex-start; margin-bottom: 15px; width: 100%; }
-    .message-content { background-color: #007bff; padding: 12px 20px; border-radius: 15px; font-size: 14px; max-width: 70%; color: white; transition: all 0.3s ease; margin-top: 5px; }
-    .message-content.mention { background-color: #FFEB3B; color: black; padding: 5px 10px; border-radius: 5px; }
-    .message-header { display: flex; align-items: center; }
-    .message-username { font-weight: bold; margin-right: 10px; font-size: 12px; color: #00ccff; }
-    .message-role { font-size: 12px; color: white; font-weight: bold; background-color: #FFD700; padding: 3px 10px; border-radius: 5px; }
-    .message-timestamp { font-size: 10px; color: #aaa; margin-top: 5px; text-align: left; }
-    .input-container { display: flex; align-items: center; gap: 10px; margin-top: 20px; }
-    input[type="text"] { flex: 1; padding: 12px; font-size: 14px; border-radius: 5px; border: none; background-color: #333; color: white; }
-    button { padding: 12px 20px; background-color: #007bff; color: white; border: none; border-radius: 5px; cursor: pointer; }
-    @media (max-width: 768px) {
-      .input-container { margin-top: 20px; }
-      .chat-container { padding-bottom: 120px; }
-    }
-    #offlineScreen {
-      display: none;
-      position: fixed;
-      top: 0;
-      left: 0;
-      width: 100vw;
-      height: 100vh;
-      background: linear-gradient(45deg, #1a2a6c, #b21f1f, #fdbb2d);
-      background-size: 600% 600%;
-      animation: gradientAnimation 8s ease infinite;
-      z-index: 9999;
-      text-align: center;
-      padding: 20px;
-      color: #fff;
-    }
-    @keyframes gradientAnimation {
-      0% { background-position: 0% 50%; }
-      50% { background-position: 100% 50%; }
-      100% { background-position: 0% 50%; }
-    }
-    #offlineScreen h1 {
-      margin-top: 40px;
-      font-size: 3.5rem;
-      color: #ffffff;
-      text-shadow: 2px 2px 8px rgba(0,0,0,0.5);
-      animation: fadeInDown 1s ease forwards;
-    }
-    @keyframes fadeInDown {
-      from { opacity: 0; transform: translateY(-20px); }
-      to { opacity: 1; transform: translateY(0); }
-    }
-    #offlineScreen p {
-      font-size: 1.5rem;
-      margin-top: 20px;
-      text-shadow: 1px 1px 4px rgba(0,0,0,0.5);
-      animation: fadeInUp 1s ease forwards;
-    }
-    @keyframes fadeInUp {
-      from { opacity: 0; transform: translateY(20px); }
-      to { opacity: 1; transform: translateY(0); }
-    }
-    #offlineScreen img {
-      margin-top: 30px;
-      max-width: 90%;
-      height: auto;
-      border-radius: 10px;
-      box-shadow: 0 0 20px rgba(0,0,0,0.5);
-      animation: popIn 1s ease forwards;
-    }
-    @keyframes popIn {
-      from { opacity: 0; transform: scale(0.8); }
-      to { opacity: 1; transform: scale(1); }
-    }
-    #offlineScreen button {
-      margin-top: 30px;
-      padding: 12px 20px;
-      background-color: #007bff;
-      border: none;
-      border-radius: 5px;
-      color: white;
-      font-size: 1rem;
-      cursor: pointer;
-      transition: background-color 0.3s ease;
-    }
-    #offlineScreen button:hover {
-      background-color: #0056b3;
-    }
+    body { background: #0a0a0a; color: #fff; margin: 0; overflow: hidden; }
+    #intro, #chat { position: fixed; width: 100vw; height: 100vh; top: 0; left: 0; }
+    #intro { display: flex; flex-direction: column; justify-content: center; align-items: center; background: linear-gradient(135deg, #1a73e8, #e91e63); z-index: 10; }
+    #chat { display: none; flex-direction: column; justify-content: flex-end; padding: 1rem; background: #111; z-index: 1; }
+    .messages { flex: 1; overflow-y: auto; margin-bottom: 1rem; padding-right: 0.5rem; }
+    .bubble { max-width: 80%; padding: 0.5rem 1rem; border-radius: 1rem; margin-bottom: 0.5rem; display: inline-block; word-wrap: break-word; }
+    .user-bubble { background-color: #2d2d2d; color: #0ff; align-self: flex-start; }
+    .system-bubble { background-color: #333; color: #ff0; font-style: italic; align-self: center; }
+    .vibetalk-title { font-size: 1.5rem; color: #0ff; font-weight: bold; margin-bottom: 1rem; }
+    .input-container { display: flex; gap: 0.5rem; }
+    #particles-js { position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: 0; }
   </style>
 </head>
 <body>
-  <noscript>
-    <iframe src="https://www.googletagmanager.com/ns.html?id=GTM-546QLFS2" height="0" width="0" style="display:none;visibility:hidden"></iframe>
-  </noscript>
-  <div class="container" id="introContainer">
-    <img src="https://tr.rbxcdn.com/180DAY-e5863c4becad95578285b9e4f360bf84/150/150/Image/Webp/noFilter" alt="Logo" class="logo" id="logo">
-  </div>
-  <div class="chat-container" id="chatContainer">
-    <ul class="messages" id="messages"></ul>
-    <div class="input-container">
-      <input type="text" id="message" placeholder="Type a message..." onkeydown="handleKeyDown(event)">
-      <button onclick="sendMessage()">Send</button>
-    </div>
-  </div>
-  <div id="offlineScreen">
-    <h1>No Internet Connection</h1>
-    <p>Your WiFi is not working. Please check your connection.</p>
-    <img src="https://cdn.glitch.global/47e45c87-30a2-4b4f-af00-6c82cbf288ad/image-removebg-preview%20(13).png?v=1741889398998" alt="Offline Image">
-    <button id="btnOfflineView">Visualizza Contenuto Offline</button>
-  </div>
-  <script>
-    function mostraOffline() {
-      document.getElementById('chatContainer').style.display = 'none';
-      document.getElementById('introContainer').style.display = 'none';
-      document.getElementById('offlineScreen').style.display = 'block';
-    }
-    function mostraOnline() {
-      document.getElementById('offlineScreen').style.display = 'none';
-      document.getElementById('chatContainer').style.display = 'block';
-    }
-    window.addEventListener('offline', mostraOffline);
-    window.addEventListener('online', mostraOnline);
-    window.onload = function() {
-      if (!navigator.onLine) {
-        mostraOffline();
-      } else {
-        document.getElementById('offlineScreen').style.display = 'none';
-      }
-      sendAlert();
-      if (localStorage.getItem('banned') === 'true') {
-        window.location.href = 'ban';
-      }
-      if (window.innerWidth <= 768) {
-        introContainer.style.display = "none";
-        chatContainer.style.opacity = "1";
-        chatContainer.style.transform = "scale(1)";
-        document.querySelector('.input-container').style.marginTop = "10px";
-      } else {
-        introContainer.style.transition = "opacity 1s ease-in-out";
-        introContainer.style.opacity = "1";
-        setTimeout(() => {
-          introContainer.style.opacity = "0";
-          setTimeout(() => {
-            introContainer.style.display = "none";
-            chatContainer.style.opacity = "1";
-            chatContainer.style.transform = "scale(1)";
-          }, 1000);
-        }, 3000);
-      }
-      setInterval(loadMessages, 1000);
-    };
-    document.getElementById('btnOfflineView').addEventListener('click', function() {
-      fetch('https://vibetalk.glitch.me/offline.html').then(response => response.text()).then(html => {
-        const offlineContent = document.createElement('div');
-        offlineContent.id = 'offlineContent';
-        offlineContent.innerHTML = html;
-        document.body.innerHTML = '';
-        document.body.appendChild(offlineContent);
-      }).catch(err => console.error('Error loading offline content:', err));
-    });
-    const forbiddenNicknames = ["Guestisback", "User-2007", "System"];
-    let userId = localStorage.getItem('userId');
-    let userRole = localStorage.getItem('userRole') || 'user';
-    let notificationsAllowed = Notification.permission === 'granted';
-    const messagesList = document.getElementById('messages');
-    const messageInput = document.getElementById('message');
-    const introContainer = document.getElementById('introContainer');
-    const chatContainer = document.getElementById('chatContainer');
-    let notifiedMentions = new Set();
-    document.addEventListener("DOMContentLoaded", () => {
-      if (!userId) {
-        userId = generateUserId();
-        localStorage.setItem('userId', userId);
-        localStorage.setItem('userRole', 'user');
-        registerUser(userId);
-      }
-      if (window.innerWidth <= 768) {
-        introContainer.style.display = "none";
-        chatContainer.style.opacity = "1";
-        chatContainer.style.transform = "scale(1)";
-        document.querySelector('.input-container').style.marginTop = "10px";
-      } else {
-        introContainer.style.transition = "opacity 1s ease-in-out";
-        setTimeout(() => {
-          introContainer.style.opacity = "0";
-          setTimeout(() => {
-            introContainer.style.display = "none";
-            chatContainer.style.opacity = "1";
-            chatContainer.style.transform = "scale(1)";
-          }, 1000);
-        }, 3000);
-      }
-      setInterval(loadMessages, 1000);
-    });
-    function normalizeUsername(username) {
-      return username.trim().toLowerCase().replace(/0/g, 'o').replace(/1/g, 'l').replace(/_/g, '').replace(/-/g, '');
-    }
-    async function generateUserId() {
-      let newUserId = prompt("Choose a nickname:");
-      if (!newUserId) newUserId = `User-${Math.floor(Math.random() * 10000)}`;
-      let normalizedUserId = normalizeUsername(newUserId);
-      if (forbiddenNicknames.some(nick => normalizeUsername(nick) === normalizedUserId)) {
-        alert("This nickname is not allowed. Please choose another one.");
-        return generateUserId();
-      }
-      Object.defineProperty(localStorage, 'userId', {
-        value: newUserId,
-        writable: false,
-        configurable: false
-      });
-      return newUserId;
-    }
-    document.addEventListener("DOMContentLoaded", async () => {
-      let userId = localStorage.getItem('userId');
-      if (!userId) {
-        userId = await generateUserId();
-        localStorage.setItem('userId', userId);
-      }
-      setInterval(() => {
-        if (localStorage.getItem('userId') !== userId) {
-          localStorage.setItem('userId', userId);
-        }
-      }, 1000);
-      console.log("User ID confirmed:", userId);
-    });
- async function sendMessage() {
-    const msg = messageInput.value.trim();
-    if (!msg) return;
-    if (!localStorage.getItem('notificationsRequested')) {
-      localStorage.setItem('notificationsRequested', 'true');
-      Notification.requestPermission().then(permission => {
-        if (permission === 'granted') notificationsAllowed = true;
-      });
-    }
-    const imageUrlRegex = /(https?:\/\/.*\.(?:png|jpg|jpeg|gif|bmp))/i;
-    const match = msg.match(imageUrlRegex);
-    const messageData = {
-      userId: userId,
-      role: userRole,
-      message: msg,
-      messageId: `${msg}-${Date.now()}`,
-      timestamp: Date.now(),
-      imageUrl: match ? match[0] : null
-    };
-    try {
-      const response = await fetch('https://vibetalk.glitch.me/messages', {
-        method: 'POST',
-        mode: 'cors',
-        headers: {
-          'Content-Type': 'application/json'
-        },
-        body: JSON.stringify(messageData)
-      });
-      if (response.status === 403) {
-        const data = await response.json();
-        alert(data.status);
-        localStorage.setItem('banned', 'true');
-        window.location.href = 'ban';
-        return;
-      }
-      if (!response.ok) {
-        console.error('Errore invio messaggio:', response.statusText);
-        return;
-      }
-      messageInput.value = '';
-      loadMessages(true);
-    } catch (err) {
-      console.error('Fetch POST fallito:', err);
-      mostraOffline();
-    }
-  }
+<div id="particles-js"></div>
 
-  async function loadMessages(scrollToBottom = false) {
-    try {
-      const response = await fetch('https://vibetalk.glitch.me/messages', {
-        method: 'GET',
-        mode: 'cors',
-        headers: {
-          'Accept': 'application/json'
-        }
-      });
-      if (!response.ok) {
-        console.error('Errore caricamento messaggi:', response.statusText);
-        return;
-      }
-      const data = await response.json();
-      const wasScrolledToBottom = messagesList.scrollHeight - messagesList.clientHeight <= messagesList.scrollTop + 1;
-      messagesList.innerHTML = '';
-      data.forEach(msg => {
-        const li = document.createElement('li');
-        li.classList.add('message');
-        const header = document.createElement('div');
-        header.classList.add('message-header');
-        const name = document.createElement('span');
-        name.classList.add('message-username');
-        name.textContent = msg.userId;
-        const role = document.createElement('span');
-        role.classList.add('message-role');
-        role.textContent = msg.role || '';
-        header.append(name, role);
-        const content = document.createElement('div');
-        content.classList.add('message-content');
-        content.textContent = msg.message;
-        const ts = document.createElement('span');
-        ts.classList.add('message-timestamp');
-        ts.textContent = new Date(msg.timestamp).toLocaleString();
-        li.append(header, content, ts);
-        messagesList.appendChild(li);
-        if (msg.role === 'Explorer' && !alertShown) {
-          alert('Congratulations! You have received the role of Explorer.');
-          alertShown = true;
-        }
-      });
-      if (wasScrolledToBottom || scrollToBottom) {
-        messagesList.scrollTop = messagesList.scrollHeight;
-      }
-    } catch (err) {
-      console.error('Fetch GET fallito:', err);
-      mostraOffline();
-    }
+<div id="intro" class="animate__animated animate__fadeIn">
+  <h1 class="text-4xl mb-4 animate__animated animate__bounceIn">Welcome to VibeTalk</h1>
+  <input id="usernameInput" type="text" placeholder="Enter your username..." class="p-2 rounded text-black" />
+  <button id="startBtn" class="mt-4 px-4 py-2 bg-blue-500 rounded hover:bg-blue-600">Inizia Chat</button>
+</div>
+
+<div id="chat" class="flex flex-col">
+  <div class="vibetalk-title">VibeTalk</div>
+  <div class="messages flex flex-col" id="messages"></div>
+  <div class="input-container">
+    <input id="message" type="text" placeholder="Type a message.." class="flex-1 p-2 rounded bg-gray-800 text-white" />
+    <button onclick="sendMessage()" class="px-4 py-2 bg-green-500 rounded hover:bg-green-600">Invia</button>
+  </div>
+</div>
+
+<script>
+let username
+const chat = document.getElementById('chat')
+const intro = document.getElementById('intro')
+const messageInput = document.getElementById('message')
+const messagesContainer = document.getElementById('messages')
+let shownMessages = new Set()
+
+function appendBubble(type, content, id) {
+  if (shownMessages.has(id)) return
+  const div = document.createElement('div')
+  div.className = `bubble ${type}-bubble animate__animated animate__fadeIn`
+  div.innerHTML = content
+  messagesContainer.appendChild(div)
+  shownMessages.add(id)
+}
+
+function loadUsername() {
+  const saved = localStorage.getItem('vibetalk_user')
+  if (saved) {
+    username = saved
+    intro.style.display = 'none'
+    chat.style.display = 'flex'
+    gsap.from('#chat', { opacity: 0, y: 50, duration: 1 })
+    notifyJoin()
+    startPolling()
   }
-    function scrollToBottom() {
-      messagesList.scrollTop = messagesList.scrollHeight;
+}
+
+document.getElementById('startBtn').onclick = () => {
+  const val = document.getElementById('usernameInput').value.trim()
+  if (!val) return alert('Username required')
+  username = val
+  localStorage.setItem('vibetalk_user', username)
+  Object.freeze(localStorage)
+  intro.style.display = 'none'
+  chat.style.display = 'flex'
+  gsap.from('#chat', { opacity: 0, y: 50, duration: 1 })
+  notifyJoin()
+  startPolling()
+}
+
+function notifyJoin() {
+  axios.post('https://vibetalk.glitch.me/messages', {
+    userId: 'System',
+    role: 'system',
+    message: `${username} entered the chat...`,
+    timestamp: Date.now()
+  })
+}
+
+async function sendMessage() {
+  const testo = messageInput.value.trim()
+  if (!testo) return
+  await axios.post('https://vibetalk.glitch.me/messages', {
+    userId: username,
+    role: 'user',
+    message: testo,
+    timestamp: Date.now()
+  })
+  messageInput.value = ''
+  loadMessages(true)
+}
+
+async function loadMessages(forceScroll = false) {
+  const wasAtBottom = messagesContainer.scrollHeight - messagesContainer.scrollTop <= messagesContainer.clientHeight + 10
+  const res = await axios.get('https://vibetalk.glitch.me/messages')
+  res.data.forEach(m => {
+    const id = `${m.userId}-${m.timestamp}`
+    if (m.role === 'system') {
+      appendBubble('system', m.message, id)
+    } else {
+      appendBubble('user', `<span class="font-bold text-cyan-400">${m.userId}</span>: ${m.message}`, id)
     }
-    function handleKeyDown(event) {
-      if (event.key === 'Enter') {
-        sendMessage();
-      }
-    }
-    window.dataLayer = window.dataLayer || [];
-    function gtag(){ dataLayer.push(arguments); }
-    gtag('js', new Date());
-    gtag('config', 'G-B5M4SJRQ0M');
-    function getUrlParams() {
-      const params = new URLSearchParams(window.location.search);
-      const text = params.get("text");
-      const send = params.get("send");
-      return { text, send };
-    }
-    const { text, send } = getUrlParams();
-    if (text) {
-      messageInput.value = text;
-      if (send === "true") {
-        sendMessage();
-      }
-    }
-    document.addEventListener('contextmenu', function(e) {
-      e.preventDefault();
-    });
-    document.addEventListener('keydown', function(e) {
-      if (e.ctrlKey && (e.key === 'U' || e.key === 'I' || e.key === 'J')) {
-        e.preventDefault();
-      }
-    });
-    (function() {
-      var noop = function() {};
-      var consoleMethods = ['log', 'debug', 'info', 'warn', 'error', 'table'];
-      consoleMethods.forEach(function(method) {
-        if (console[method]) {
-          console[method] = noop;
-        }
-      });
-    })();
-    (function() {
-      var checkDevTools = setInterval(function() {
-        if (window.outerWidth - window.innerWidth > 100000 || window.outerHeight - window.innerHeight > 1000000) {
-          alert('Inspecting the source code is disabled!');
-          window.location.reload();
-        }
-      }, 1000);
-    })();
-  </script>
+  })
+  if (wasAtBottom || forceScroll) {
+    messagesContainer.scrollTop = messagesContainer.scrollHeight
+  }
+}
+
+function startPolling() {
+  loadMessages()
+  setInterval(loadMessages, 2000)
+}
+
+loadUsername()
+</script>
+
 </body>
 </html>
